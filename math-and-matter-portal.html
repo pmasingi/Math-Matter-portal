@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Math & Matter — Student Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F8F7F4;
+  --surface:#FFFFFF;
+  --surface2:#F2F1ED;
+  --border:#E5E3DC;
+  --text:#1A1916;
+  --text2:#6B6860;
+  --text3:#9B9890;
+  --blue:#2563EB;
+  --blue-bg:#EFF4FF;
+  --green:#16A34A;
+  --green-bg:#F0FDF4;
+  --purple:#7C3AED;
+  --purple-bg:#F5F3FF;
+  --amber:#D97706;
+  --amber-bg:#FFFBEB;
+  --red:#DC2626;
+  --radius:10px;
+  --radius-sm:6px;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh}
+
+/* Layout */
+.app{display:flex;min-height:100vh}
+.sidebar{width:220px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:10}
+.main{flex:1;margin-left:220px;display:flex;flex-direction:column;min-height:100vh}
+
+/* Sidebar */
+.logo{padding:20px 18px 16px;border-bottom:1px solid var(--border)}
+.logo-mark{display:flex;align-items:center;gap:8px;margin-bottom:2px}
+.logo-icon{width:28px;height:28px;background:var(--text);border-radius:6px;display:flex;align-items:center;justify-content:center}
+.logo-icon i{color:white;font-size:15px}
+.logo-name{font-size:15px;font-weight:600;letter-spacing:-0.3px}
+.logo-sub{font-size:11px;color:var(--text3);letter-spacing:0.2px;margin-left:36px}
+.nav{flex:1;padding:10px 0;overflow-y:auto}
+.nav-sep{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);padding:14px 18px 4px;font-weight:500}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 18px;font-size:13px;cursor:pointer;color:var(--text2);transition:all 0.12s;margin:1px 8px;border-radius:var(--radius-sm)}
+.nav-item:hover{background:var(--surface2);color:var(--text)}
+.nav-item.active{background:var(--text);color:white}
+.nav-item.active i{color:white}
+.nav-item i{font-size:16px;flex-shrink:0}
+.sidebar-footer{padding:14px 18px;border-top:1px solid var(--border)}
+.view-label{font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:var(--text3);margin-bottom:8px;font-weight:500}
+.pill-toggle{display:flex;background:var(--surface2);border-radius:99px;padding:3px;gap:2px}
+.pill-btn{flex:1;text-align:center;padding:5px 0;font-size:12px;border-radius:99px;cursor:pointer;color:var(--text2);transition:all 0.15s;font-weight:500}
+.pill-btn.active{background:var(--surface);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,0.08)}
+
+/* Topbar */
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:5}
+.topbar h1{font-size:16px;font-weight:600;letter-spacing:-0.2px}
+.pkg-pill{font-size:12px;padding:4px 12px;border-radius:99px;background:var(--surface2);color:var(--text2);font-weight:500}
+
+/* Content */
+.content{flex:1;padding:20px 24px;max-width:900px}
+.section{display:none}
+.section.active{display:block}
+
+/* Metrics */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.metric{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px}
+.metric-val{font-size:22px;font-weight:600;letter-spacing:-0.5px;margin-bottom:2px}
+.metric-lbl{font-size:11px;color:var(--text2);font-weight:500;text-transform:uppercase;letter-spacing:0.4px}
+
+/* Cards */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;margin-bottom:12px}
+.card-title{font-size:13px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:7px;letter-spacing:-0.1px}
+.card-title i{font-size:16px;color:var(--text2)}
+
+/* Package timeline */
+.pkg-timeline{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;margin-bottom:16px}
+.pkg-top{display:flex;justify-content:space-between;font-size:12px;margin-bottom:8px;font-weight:500}
+.pkg-top span:last-child{color:var(--text2)}
+.bar-track{background:var(--surface2);border-radius:99px;height:6px}
+.bar-fill{height:6px;border-radius:99px;transition:width 0.5s ease}
+.pkg-dates{display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-top:5px}
+
+/* Progress rows */
+.prog-row{margin-bottom:12px}
+.prog-row:last-child{margin-bottom:0}
+.prog-meta{display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px;font-weight:500}
+.prog-meta .subj-label{display:flex;align-items:center;gap:7px}
+.prog-meta span:last-child{color:var(--text2)}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* Motive */
+.motive{border-left:3px solid var(--purple);padding:10px 14px;font-size:13px;color:var(--text2);margin-bottom:16px;border-radius:0 var(--radius-sm) var(--radius-sm) 0;background:var(--purple-bg);line-height:1.5}
+
+/* Delivered tags */
+.delivered-list{display:flex;flex-wrap:wrap;gap:6px}
+.del-tag{display:inline-flex;align-items:center;gap:5px;font-size:11px;background:var(--green-bg);color:var(--green);padding:4px 10px;border-radius:99px;font-weight:500}
+.del-tag i{font-size:12px}
+
+/* Subject accordion */
+.subj-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:10px;overflow:hidden}
+.subj-header{display:flex;align-items:center;gap:10px;padding:13px 18px;cursor:pointer;transition:background 0.1s}
+.subj-header:hover{background:var(--surface2)}
+.subj-name{font-size:14px;font-weight:600;flex:1;letter-spacing:-0.2px}
+.subj-pct{font-size:12px;color:var(--text2);font-weight:500;margin-right:6px}
+.mini-bar{width:60px}
+.chevron{font-size:15px;color:var(--text3);transition:transform 0.2s}
+.chevron.open{transform:rotate(180deg)}
+.subj-body{display:none;border-top:1px solid var(--border)}
+.subj-body.open{display:block}
+.subj-tabs{display:flex;border-bottom:1px solid var(--border);padding:0 18px;gap:2px}
+.stab{font-size:12px;padding:9px 12px;cursor:pointer;color:var(--text2);border-bottom:2px solid transparent;margin-bottom:-1px;font-weight:500;transition:all 0.1s}
+.stab:hover{color:var(--text)}
+.stab.active{color:var(--text);border-bottom-color:var(--text)}
+.stab-pane{display:none;padding:14px 18px}
+.stab-pane.active{display:block}
+
+/* Lessons */
+.lesson-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
+.lesson-row:last-child{border-bottom:none}
+.lesson-info{flex:1}
+.lesson-title{font-size:13px;font-weight:500}
+.lesson-date{font-size:11px;color:var(--text3);margin-top:1px}
+.checks{display:flex;gap:10px}
+.chk-wrap{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer}
+.chk-wrap input[type=checkbox]{cursor:pointer;accent-color:var(--blue);width:14px;height:14px}
+.chk-lbl{font-size:9px;color:var(--text3);font-weight:500;text-transform:uppercase;letter-spacing:0.3px}
+.badge{font-size:10px;padding:3px 8px;border-radius:99px;font-weight:600;flex-shrink:0}
+.b-done{background:var(--green-bg);color:var(--green)}
+.b-active{background:var(--blue-bg);color:var(--blue)}
+.b-soon{background:var(--surface2);color:var(--text3);border:1px solid var(--border)}
+.b-locked{background:var(--surface2);color:var(--text3);border:1px solid var(--border)}
+.unlock-note{font-size:11px;color:var(--text3);display:flex;align-items:center;gap:5px;padding:6px 0;font-weight:500}
+
+/* Resources */
+.res-group{margin-bottom:14px}
+.res-group:last-child{margin-bottom:0}
+.res-group-title{font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:var(--text3);margin-bottom:8px;font-weight:600}
+.res-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)}
+.res-row:last-child{border-bottom:none}
+.res-icon{font-size:17px;color:var(--text3)}
+.res-name{font-size:13px;flex:1;font-weight:500}
+.res-meta{font-size:11px;color:var(--text3)}
+.res-link{font-size:12px;color:var(--blue);cursor:pointer;text-decoration:none;font-weight:500;padding:4px 10px;background:var(--blue-bg);border-radius:99px}
+.res-link:hover{opacity:0.8}
+.res-link.placeholder{color:var(--text3);background:var(--surface2)}
+
+/* Notes */
+.notes-area{width:100%;min-height:110px;font-size:13px;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);resize:vertical;font-family:'DM Sans',sans-serif;line-height:1.6;transition:border-color 0.15s}
+.notes-area:focus{outline:none;border-color:var(--blue);background:var(--surface)}
+.notes-footer{display:flex;align-items:center;margin-top:8px;gap:8px}
+.save-btn{padding:6px 16px;font-size:12px;font-weight:600;border:1px solid var(--border);border-radius:99px;cursor:pointer;background:var(--surface);color:var(--text);font-family:'DM Sans',sans-serif;transition:all 0.1s}
+.save-btn:hover{background:var(--text);color:white}
+.saved-msg{font-size:11px;color:var(--green);font-weight:500;opacity:0;transition:opacity 0.3s}
+
+/* Weekly planner */
+.week-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.day-col{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.day-col.today{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,0.08)}
+.day-head{padding:10px 14px;font-size:13px;font-weight:600;display:flex;justify-content:space-between;align-items:center;background:var(--surface2)}
+.day-col.today .day-head{background:var(--blue-bg);color:var(--blue)}
+.day-subj{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;opacity:0.7}
+.day-body{padding:10px 14px}
+.day-item{font-size:12px;color:var(--text2);padding:4px 0;display:flex;align-items:center;gap:6px;font-weight:500}
+.day-item i{font-size:14px}
+.workflow-steps{display:flex;flex-direction:column;gap:10px}
+.wstep{display:flex;align-items:flex-start;gap:12px}
+.wstep-num{width:24px;height:24px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;color:var(--text2)}
+.wstep-body{}
+.wstep-title{font-size:13px;font-weight:600;margin-bottom:2px}
+.wstep-desc{font-size:12px;color:var(--text2);line-height:1.4}
+
+/* Tutor panel */
+.tutor-form{display:flex;flex-direction:column;gap:10px}
+.form-row{display:flex;gap:8px}
+.form-row input,.form-row select,.tutor-form select{flex:1;font-size:13px;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text);font-family:'DM Sans',sans-serif}
+.form-row input:focus,.form-row select:focus{outline:none;border-color:var(--blue)}
+.form-btn{padding:8px 18px;font-size:13px;font-weight:600;border:1px solid var(--border);border-radius:99px;cursor:pointer;background:var(--text);color:white;font-family:'DM Sans',sans-serif;transition:opacity 0.1s}
+.form-btn:hover{opacity:0.8}
+.toggle-live{display:flex;align-items:center;gap:8px;font-size:12px;cursor:pointer;color:var(--text2);font-weight:500}
+.toggle-live input{accent-color:var(--blue)}
+.manage-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);font-size:13px}
+.manage-row:last-child{border-bottom:none}
+.manage-title{flex:1;font-weight:500}
+.manage-toggle{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text2);cursor:pointer;font-weight:500}
+.manage-toggle input{accent-color:var(--blue)}
+
+/* Mobile */
+@media(max-width:640px){
+  .sidebar{width:100%;height:auto;position:static;flex-direction:row;flex-wrap:wrap}
+  .main{margin-left:0}
+  .metrics{grid-template-columns:repeat(2,1fr)}
+  .week-cols{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="logo">
+      <div class="logo-mark">
+        <div class="logo-icon"><i class="ti ti-school"></i></div>
+        <span class="logo-name">Math & Matter</span>
+      </div>
+      <div class="logo-sub">Academic Solutions</div>
+    </div>
+    <div class="nav">
+      <div class="nav-item active" onclick="nav('dashboard',this)"><i class="ti ti-layout-dashboard"></i> Dashboard</div>
+      <div class="nav-sep">Subjects</div>
+      <div class="nav-item" onclick="nav('subjects',this)"><i class="ti ti-books"></i> All subjects</div>
+      <div class="nav-item" onclick="nav('resources',this)"><i class="ti ti-file-text"></i> Resources</div>
+      <div class="nav-sep">Planning</div>
+      <div class="nav-item" onclick="nav('planner',this)"><i class="ti ti-calendar"></i> Weekly plan</div>
+      <div class="nav-item" onclick="nav('notes',this)"><i class="ti ti-pencil"></i> My notes</div>
+      <div class="nav-item tutor-only" style="display:none" onclick="nav('tutor',this)"><i class="ti ti-settings"></i> Tutor panel</div>
+    </div>
+    <div class="sidebar-footer">
+      <div class="view-label">View mode</div>
+      <div class="pill-toggle">
+        <div class="pill-btn active" onclick="setView('student',this)">Student</div>
+        <div class="pill-btn" onclick="setView('tutor',this)">Tutor</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <h1 id="page-title">Dashboard</h1>
+      <div class="pkg-pill" id="pkg-pill">Loading...</div>
+    </div>
+
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <div class="section active" id="sec-dashboard">
+        <div class="motive" id="motive"></div>
+        <div class="metrics">
+          <div class="metric"><div class="metric-val" id="m-done">0</div><div class="metric-lbl">Lessons done</div></div>
+          <div class="metric"><div class="metric-val" id="m-videos">5</div><div class="metric-lbl">Videos uploaded</div></div>
+          <div class="metric"><div class="metric-val" id="m-pct">0%</div><div class="metric-lbl">Progress</div></div>
+          <div class="metric"><div class="metric-val" id="m-next">Mon</div><div class="metric-lbl">Next class</div></div>
+        </div>
+        <div class="pkg-timeline">
+          <div class="pkg-top"><span>Package: 27 Apr – 23 May 2026</span><span id="pkg-days-left"></span></div>
+          <div class="bar-track"><div class="bar-fill" id="pkg-fill" style="background:var(--text)"></div></div>
+          <div class="pkg-dates"><span>27 Apr</span><span>23 May</span></div>
+        </div>
+        <div class="card">
+          <div class="card-title"><i class="ti ti-chart-bar"></i> Subject progress</div>
+          <div id="dash-progress"></div>
+        </div>
+        <div class="card">
+          <div class="card-title"><i class="ti ti-circle-check" style="color:var(--green)"></i> Already delivered</div>
+          <div class="delivered-list">
+            <span class="del-tag"><i class="ti ti-users"></i> Live session — 2 May</span>
+            <span class="del-tag"><i class="ti ti-video"></i> DNA intro (3 May)</span>
+            <span class="del-tag"><i class="ti ti-video"></i> DNA profiling (7 May)</span>
+            <span class="del-tag"><i class="ti ti-video"></i> DNA replication</span>
+            <span class="del-tag"><i class="ti ti-video"></i> Hyperbolic functions</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUBJECTS -->
+      <div class="section" id="sec-subjects">
+        <div id="subjects-list"></div>
+      </div>
+
+      <!-- RESOURCES -->
+      <div class="section" id="sec-resources">
+        <p style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.5">All past papers, memos, and formula sheets are listed here. Replace the download links with your actual Google Drive links.</p>
+        <div class="card">
+          <div class="card-title"><i class="ti ti-calculator"></i> Mathematics</div>
+          <div class="res-group">
+            <div class="res-group-title">Past papers</div>
+            <div class="res-row"><i class="ti ti-file-description res-icon"></i><span class="res-name">Maths Paper 1 — 2023 NSC</span><span class="res-meta">Algebra, functions</span><a class="res-link placeholder" href="#" onclick="return false">Add link</a></div>
+            <div class="res-row"><i class="ti ti-file-description res-icon"></i><span class="res-name">Maths Paper 2 — 2023 NSC</span><span class="res-meta">Geometry, stats</span><a class="res-link placeholder" href="#" onclick="return false">Add link</a></div>
+            <div class="res-row"><i class="ti ti-file-description res-icon"></i><span class="res-name">Topical: Hyperbolic functions</span><span class="res-meta">Questions + memo</span><a class="res-link placeholder" href="#" onclick="return false">Add link</a></div>
+          </div>
+          <div class="res-group">
+            <div class="res-group-title">Formula sheets</div>
+            <div class="res-row"><i class="ti ti-math res-icon"></i><span class="res-name">Grade 12 formula sheet</span><span class="res-meta">Official NSC</span><a class="res-link placeholder" href="#" onclick="return false">Add link</a></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title"><i class="ti ti-dna"></i> Life Sciences</div>
+          <div class="res-group">
+            <div class="res-group-title">Past papers</div>
+            <div class="res-row"><i class="ti ti-file-description res-icon"></i><span class="res-name">Life Sciences Paper 1 — 2023 NSC</span><span class="res-meta">DNA, genetics</span><a class="res-link placeholder" href="#" onclick="return false">Add link</a></div>
+            <div class="res-row"><i class="ti ti-file-description res-icon"></i><span class="res-name">Topical: DNA & genetics</span><span class="res-meta">Questions + memo</span><a class="res-link placeholder" href="#" onclick="return false">Add link</a></div>
+            <div class="res-row"><i class="ti ti-file-description res-icon"></i><span class="res-name">Topical: Protein synthesis</span><span class="res-meta">Questions + memo</span><a class="res-link placeholder" href="#" onclick="return false">Add link</a></div>
+          </div>
+          <div class="res-group">
+            <div class="res-group-title">Summary notes</div>
+            <div class="res-row"><i class="ti ti-notes res-icon"></i><span class="res-name">DNA chapter summary</span><span class="res-meta">2 pages</span><a class="res-link placeholder" href="#" onclick="return false">Add link</a></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title"><i class="ti ti-atom"></i> Physical Sciences</div>
+          <div class="res-group">
+            <div class="res-group-title">Past papers</div>
+            <div class="res-row"><i class="ti ti-file-description res-icon"></i><span class="res-name">Physics Paper 1 — 2023 NSC</span><span class="res-meta">Mechanics, electricity</span><a class="res-link placeholder" href="#" onclick="return false">Add link</a></div>
+            <div class="res-row"><i class="ti ti-file-description res-icon"></i><span class="res-name">Topical: Kinematics</span><span class="res-meta">Questions + memo</span><a class="res-link placeholder" href="#" onclick="return false">Add link</a></div>
+          </div>
+          <div class="res-group">
+            <div class="res-group-title">Data sheets</div>
+            <div class="res-row"><i class="ti ti-table res-icon"></i><span class="res-name">Physical Sciences data sheet</span><span class="res-meta">Constants, equations</span><a class="res-link placeholder" href="#" onclick="return false">Add link</a></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PLANNER -->
+      <div class="section" id="sec-planner">
+        <div class="card">
+          <div class="card-title"><i class="ti ti-calendar-week"></i> Class schedule — Mon / Wed / Fri</div>
+          <div class="week-cols">
+            <div class="day-col" id="day-mon">
+              <div class="day-head"><span>Monday</span><span class="day-subj">Maths</span></div>
+              <div class="day-body">
+                <div class="day-item"><i class="ti ti-video"></i> Watch lesson video</div>
+                <div class="day-item"><i class="ti ti-pencil"></i> Practice questions</div>
+                <div class="day-item"><i class="ti ti-file-check"></i> Mark with memo</div>
+                <div class="day-item"><i class="ti ti-circle-check"></i> Tick off dashboard</div>
+              </div>
+            </div>
+            <div class="day-col" id="day-wed">
+              <div class="day-head"><span>Wednesday</span><span class="day-subj">Life Sci</span></div>
+              <div class="day-body">
+                <div class="day-item"><i class="ti ti-video"></i> Watch lesson video</div>
+                <div class="day-item"><i class="ti ti-pencil"></i> Practice questions</div>
+                <div class="day-item"><i class="ti ti-file-check"></i> Mark with memo</div>
+                <div class="day-item"><i class="ti ti-circle-check"></i> Tick off dashboard</div>
+              </div>
+            </div>
+            <div class="day-col" id="day-fri">
+              <div class="day-head"><span>Friday</span><span class="day-subj">Physics</span></div>
+              <div class="day-body">
+                <div class="day-item"><i class="ti ti-video"></i> Watch lesson video</div>
+                <div class="day-item"><i class="ti ti-pencil"></i> Practice questions</div>
+                <div class="day-item"><i class="ti ti-file-check"></i> Mark with memo</div>
+                <div class="day-item"><i class="ti ti-circle-check"></i> Tick off dashboard</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title"><i class="ti ti-target"></i> Daily workflow — how to get the most out of every lesson</div>
+          <div class="workflow-steps">
+            <div class="wstep"><div class="wstep-num">1</div><div class="wstep-body"><div class="wstep-title">Watch the video</div><div class="wstep-desc">Take notes while watching. Pause and rewind freely. Don't just passively listen.</div></div></div>
+            <div class="wstep"><div class="wstep-num">2</div><div class="wstep-body"><div class="wstep-title">Attempt the practice questions</div><div class="wstep-desc">Close your notes and try the questions on your own first. That's when real learning happens.</div></div></div>
+            <div class="wstep"><div class="wstep-num">3</div><div class="wstep-body"><div class="wstep-title">Mark using the memo</div><div class="wstep-desc">Go through carefully. Find exactly where marks were lost and why. Write down those mistakes.</div></div></div>
+            <div class="wstep"><div class="wstep-num">4</div><div class="wstep-body"><div class="wstep-title">Tick off in your dashboard</div><div class="wstep-desc">Only tick "Understood" if you'd get it right in an exam tomorrow. Be honest with yourself.</div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NOTES -->
+      <div class="section" id="sec-notes">
+        <p style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.5">Your personal notes — saved automatically in your browser. Write key formulas, things to remember, or questions to ask.</p>
+        <div class="card">
+          <div class="card-title"><i class="ti ti-calculator"></i> Mathematics notes</div>
+          <textarea class="notes-area" id="notes-maths" placeholder="Key formulas, patterns, things to remember..." oninput="saveNote('maths',this.value)"></textarea>
+          <div class="notes-footer"><button class="save-btn" onclick="flashSaved('maths')">Save</button><span class="saved-msg" id="saved-maths">Saved ✓</span></div>
+        </div>
+        <div class="card">
+          <div class="card-title"><i class="ti ti-dna"></i> Life Sciences notes</div>
+          <textarea class="notes-area" id="notes-life" placeholder="Key terms, processes, diagrams to remember..." oninput="saveNote('life',this.value)"></textarea>
+          <div class="notes-footer"><button class="save-btn" onclick="flashSaved('life')">Save</button><span class="saved-msg" id="saved-life">Saved ✓</span></div>
+        </div>
+        <div class="card">
+          <div class="card-title"><i class="ti ti-atom"></i> Physical Sciences notes</div>
+          <textarea class="notes-area" id="notes-phys" placeholder="Equations, units, exam tips..." oninput="saveNote('phys',this.value)"></textarea>
+          <div class="notes-footer"><button class="save-btn" onclick="flashSaved('phys')">Save</button><span class="saved-msg" id="saved-phys">Saved ✓</span></div>
+        </div>
+      </div>
+
+      <!-- TUTOR PANEL -->
+      <div class="section" id="sec-tutor">
+        <div class="card">
+          <div class="card-title"><i class="ti ti-plus"></i> Add new lesson</div>
+          <div class="tutor-form">
+            <div class="form-row">
+              <select id="t-subj">
+                <option value="0">Mathematics</option>
+                <option value="1">Life Sciences</option>
+                <option value="2">Physical Sciences</option>
+              </select>
+              <input type="text" id="t-title" placeholder="Lesson title e.g. Quadratic equations" />
+            </div>
+            <div class="form-row">
+              <input type="text" id="t-link" placeholder="Google Drive video link (optional)" />
+              <input type="text" id="t-date" placeholder="Date e.g. 21 May" />
+            </div>
+            <label class="toggle-live"><input type="checkbox" id="t-live"> Mark as live (visible to student) immediately</label>
+            <div><button class="form-btn" onclick="tutorAdd()"><i class="ti ti-plus"></i> Add lesson</button></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title"><i class="ti ti-chart-bar"></i> Student progress overview</div>
+          <div id="tutor-overview"></div>
+        </div>
+        <div class="card">
+          <div class="card-title"><i class="ti ti-eye"></i> Control lesson visibility</div>
+          <div id="tutor-manage"></div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<script>
+const MOTIVES=[
+  "Every completed lesson is one step closer to walking into that exam with confidence.",
+  "Tick off what you've done. Watch your progress build, one lesson at a time.",
+  "Consistency beats cramming. Showing up Monday, Wednesday, Friday is what wins.",
+  "Be honest with yourself. Only tick 'understood' if you'd get it right tomorrow."
+];
+const SUBJ=[
+  {name:'Mathematics',icon:'ti-calculator',color:'#2563EB',dot:'#2563EB'},
+  {name:'Life Sciences',icon:'ti-dna',color:'#7C3AED',dot:'#7C3AED'},
+  {name:'Physical Sciences',icon:'ti-atom',color:'#16A34A',dot:'#16A34A'}
+];
+const DEFAULT_LESSONS=[
+  [
+    {title:'Hyperbolic functions',uploaded:true,date:'May 2026',link:'',checks:{watched:false,practiced:false,memo:false,understood:false}},
+    {title:'Algebra & equations — past paper walkthrough',uploaded:false,date:'',link:'',checks:{watched:false,practiced:false,memo:false,understood:false}},
+    {title:'Functions & graphs',uploaded:false,date:'',link:'',checks:{watched:false,practiced:false,memo:false,understood:false}},
+  ],
+  [
+    {title:'DNA introduction / protein synthesis',uploaded:true,date:'3 May',link:'',checks:{watched:false,practiced:false,memo:false,understood:false}},
+    {title:'DNA profiling',uploaded:true,date:'7 May',link:'',checks:{watched:false,practiced:false,memo:false,understood:false}},
+    {title:'DNA replication',uploaded:true,date:'May 2026',link:'',checks:{watched:false,practiced:false,memo:false,understood:false}},
+    {title:'Genetics — past paper walkthrough',uploaded:false,date:'',link:'',checks:{watched:false,practiced:false,memo:false,understood:false}},
+  ],
+  [
+    {title:'Kinematics & vectors',uploaded:false,date:'',link:'',checks:{watched:false,practiced:false,memo:false,understood:false}},
+    {title:'Electric circuits',uploaded:false,date:'',link:'',checks:{watched:false,practiced:false,memo:false,understood:false}},
+    {title:'Waves & sound',uploaded:false,date:'',link:'',checks:{watched:false,practiced:false,memo:false,understood:false}},
+  ]
+];
+
+function loadL(){try{const s=localStorage.getItem('mm_lessons_v2');return s?JSON.parse(s):JSON.parse(JSON.stringify(DEFAULT_LESSONS))}catch(e){return JSON.parse(JSON.stringify(DEFAULT_LESSONS))}}
+function saveL(d){try{localStorage.setItem('mm_lessons_v2',JSON.stringify(d))}catch(e){}}
+function loadN(){try{return JSON.parse(localStorage.getItem('mm_notes_v2')||'{}')}catch(e){return{}}}
+function saveN(n){try{localStorage.setItem('mm_notes_v2',JSON.stringify(n))}catch(e){}}
+
+let lessons=loadL();
+let notes=loadN();
+let isTutor=false;
+let openSubj=new Set([0,1,2]);
+let openTab={0:'lessons',1:'lessons',2:'lessons'};
+
+function isUnlocked(si,li){
+  if(li===0)return true;
+  const p=lessons[si][li-1];
+  return p.uploaded&&p.checks.watched&&p.checks.practiced&&p.checks.memo&&p.checks.understood;
+}
+function isDone(l){return l.checks.watched&&l.checks.practiced&&l.checks.memo&&l.checks.understood;}
+function subjPct(si){
+  const ls=lessons[si].filter((l,li)=>l.uploaded&&isUnlocked(si,li));
+  return ls.length?Math.round(ls.filter(l=>isDone(l)).length/ls.length*100):0;
+}
+function totalDone(){return lessons.reduce((a,s,si)=>a+s.filter((l,li)=>l.uploaded&&isUnlocked(si,li)&&isDone(l)).length,0);}
+function totalAvail(){return lessons.reduce((a,s,si)=>a+s.filter((l,li)=>l.uploaded&&isUnlocked(si,li)).length,0);}
+
+function renderAll(){
+  // Motive
+  const m=document.getElementById('motive');
+  if(m)m.textContent=MOTIVES[new Date().getDate()%MOTIVES.length];
+
+  // Package bar
+  const start=new Date('2026-04-27'),end=new Date('2026-05-23'),now=new Date();
+  const pct=Math.round(Math.min(Math.max((now-start)/(end-start),0),1)*100);
+  const el=id=>document.getElementById(id);
+  el('pkg-fill').style.width=pct+'%';
+  const dl=Math.max(0,Math.ceil((end-now)/864e5));
+  el('pkg-pill').textContent=dl>0?dl+' days left in package':'Package ended';
+  el('pkg-days-left').textContent=dl>0?dl+' days remaining':'Ended';
+
+  // Metrics
+  const done=totalDone(),avail=totalAvail();
+  el('m-done').textContent=done;
+  el('m-pct').textContent=avail?Math.round(done/avail*100)+'%':'0%';
+  const classDays={1:'Mon',3:'Wed',5:'Fri'};
+  const td=new Date().getDay();
+  let next='Mon';
+  for(let i=1;i<=7;i++){const d=(td+i)%7;if(classDays[d]){next=classDays[d];break;}}
+  el('m-next').textContent=next;
+
+  // Dash progress
+  const dp=el('dash-progress');
+  if(dp)dp.innerHTML=SUBJ.map((s,si)=>{
+    const p=subjPct(si);
+    return `<div class="prog-row"><div class="prog-meta"><span class="subj-label"><span class="dot" style="background:${s.dot}"></span>${s.name}</span><span>${p}%</span></div><div class="bar-track"><div class="bar-fill" style="width:${p}%;background:${s.color}"></div></div></div>`;
+  }).join('');
+
+  // Today highlights
+  ['mon','wed','fri'].forEach(x=>{const c=el('day-'+x);if(c)c.classList.remove('today');});
+  if(td===1&&el('day-mon'))el('day-mon').classList.add('today');
+  if(td===3&&el('day-wed'))el('day-wed').classList.add('today');
+  if(td===5&&el('day-fri'))el('day-fri').classList.add('today');
+
+  // Subjects
+  const sl=el('subjects-list');
+  if(sl)sl.innerHTML=SUBJ.map((_,si)=>renderSubj(si)).join('');
+
+  // Notes
+  ['maths','life','phys'].forEach(k=>{
+    const ta=el('notes-'+k);
+    if(ta&&notes[k]!==undefined)ta.value=notes[k];
+  });
+
+  // Tutor
+  if(isTutor)renderTutor();
+}
+
+function renderSubj(si){
+  const s=SUBJ[si];const pct=subjPct(si);
+  const open=openSubj.has(si);const tab=openTab[si]||'lessons';
+  const rows=lessons[si].map((l,li)=>{
+    const acc=l.uploaded&&isUnlocked(si,li);
+    const done=isDone(l);
+    let badge=done?'<span class="badge b-done">Done</span>':
+      !l.uploaded?'<span class="badge b-soon">Coming soon</span>':
+      !isUnlocked(si,li)?'<span class="badge b-locked"><i class="ti ti-lock" style="font-size:9px"></i> Locked</span>':
+      '<span class="badge b-active">Active</span>';
+    let chks='';
+    if(acc&&!isTutor){
+      const c=l.checks;
+      chks=`<div class="checks">
+        <label class="chk-wrap"><input type="checkbox" ${c.watched?'checked':''} onchange="chk(${si},${li},'watched',this.checked)"><span class="chk-lbl">Watch</span></label>
+        <label class="chk-wrap"><input type="checkbox" ${c.practiced?'checked':''} onchange="chk(${si},${li},'practiced',this.checked)"><span class="chk-lbl">Practice</span></label>
+        <label class="chk-wrap"><input type="checkbox" ${c.memo?'checked':''} onchange="chk(${si},${li},'memo',this.checked)"><span class="chk-lbl">Memo</span></label>
+        <label class="chk-wrap"><input type="checkbox" ${c.understood?'checked':''} onchange="chk(${si},${li},'understood',this.checked)"><span class="chk-lbl">Got it</span></label>
+      </div>`;
+    }
+    let hint=l.uploaded&&!isUnlocked(si,li)?`<div class="unlock-note"><i class="ti ti-lock"></i> Complete the previous lesson to unlock this one</div>`:'';
+    return `<div class="lesson-row" style="${!acc?'opacity:0.4':''}">
+      <div class="lesson-info"><div class="lesson-title">${l.title}</div>${l.date?`<div class="lesson-date">${l.date}</div>`:''}</div>
+      ${badge}${chks}
+    </div>${hint}`;
+  }).join('');
+
+  const noteKey=['maths','life','phys'][si];
+  return `<div class="subj-card">
+    <div class="subj-header" onclick="toggleSubj(${si})">
+      <span class="dot" style="background:${s.dot}"></span>
+      <span class="subj-name">${s.name}</span>
+      <span class="subj-pct">${pct}%</span>
+      <div class="mini-bar bar-track"><div class="bar-fill" style="width:${pct}%;background:${s.color}"></div></div>
+      <i class="ti ti-chevron-down chevron ${open?'open':''}"></i>
+    </div>
+    <div class="subj-body ${open?'open':''}">
+      <div class="subj-tabs">
+        <div class="stab ${tab==='lessons'?'active':''}" onclick="setTab(${si},'lessons')">Lessons</div>
+        <div class="stab ${tab==='notes'?'active':''}" onclick="setTab(${si},'notes')">My notes</div>
+      </div>
+      <div class="stab-pane ${tab==='lessons'?'active':''}">${rows}</div>
+      <div class="stab-pane ${tab==='notes'?'active':''}">
+        <textarea class="notes-area" style="min-height:90px" placeholder="Your personal notes for ${s.name}..." oninput="saveNote('${noteKey}',this.value)">${notes[noteKey]||''}</textarea>
+      </div>
+    </div>
+  </div>`;
+}
+
+function toggleSubj(si){openSubj.has(si)?openSubj.delete(si):openSubj.add(si);renderAll();}
+function setTab(si,tab){openTab[si]=tab;renderAll();}
+function chk(si,li,key,val){lessons[si][li].checks[key]=val;saveL(lessons);renderAll();}
+
+function saveNote(k,v){notes[k]=v;saveN(notes);}
+function flashSaved(k){const el=document.getElementById('saved-'+k);if(el){el.style.opacity='1';setTimeout(()=>el.style.opacity='0',1800);}}
+
+function renderTutor(){
+  const to=document.getElementById('tutor-overview');
+  if(to)to.innerHTML=SUBJ.map((s,si)=>{
+    const up=lessons[si].filter(l=>l.uploaded).length;
+    const done=lessons[si].filter(l=>l.uploaded&&isDone(l)).length;
+    const pct=up?Math.round(done/up*100):0;
+    return `<div class="prog-row"><div class="prog-meta"><span class="subj-label"><span class="dot" style="background:${s.dot}"></span>${s.name}</span><span>${done}/${up} complete · ${pct}%</span></div><div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${s.color}"></div></div></div>`;
+  }).join('');
+
+  const tm=document.getElementById('tutor-manage');
+  if(tm)tm.innerHTML=SUBJ.map((s,si)=>`
+    <div style="margin-bottom:16px">
+      <div style="font-size:12px;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:7px;text-transform:uppercase;letter-spacing:0.4px;color:var(--text2)"><span class="dot" style="background:${s.dot}"></span>${s.name}</div>
+      ${lessons[si].map((l,li)=>`
+        <div class="manage-row">
+          <span class="manage-title">${l.title}</span>
+          <label class="manage-toggle"><input type="checkbox" ${l.uploaded?'checked':''} onchange="toggleUp(${si},${li},this.checked)"> Live</label>
+        </div>`).join('')}
+    </div>`).join('');
+}
+
+function toggleUp(si,li,v){lessons[si][li].uploaded=v;saveL(lessons);renderAll();}
+
+function tutorAdd(){
+  const si=parseInt(document.getElementById('t-subj').value);
+  const title=document.getElementById('t-title').value.trim();
+  const link=document.getElementById('t-link').value.trim();
+  const date=document.getElementById('t-date').value.trim();
+  const live=document.getElementById('t-live').checked;
+  if(!title)return;
+  lessons[si].push({title,uploaded:live,date,link,checks:{watched:false,practiced:false,memo:false,understood:false}});
+  saveL(lessons);
+  document.getElementById('t-title').value='';
+  document.getElementById('t-link').value='';
+  document.getElementById('t-date').value='';
+  document.getElementById('t-live').checked=false;
+  renderAll();
+}
+
+function nav(id,el){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  el.classList.add('active');
+  const titles={dashboard:'Dashboard',subjects:'All subjects',resources:'Resources',planner:'Weekly plan',notes:'My notes',tutor:'Tutor panel'};
+  document.getElementById('page-title').textContent=titles[id]||id;
+  renderAll();
+}
+
+function setView(v,btn){
+  isTutor=v==='tutor';
+  document.querySelectorAll('.pill-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.tutor-only').forEach(el=>el.style.display=isTutor?'flex':'none');
+  renderAll();
+}
+
+renderAll();
+</script>
+</body>
+</html>
